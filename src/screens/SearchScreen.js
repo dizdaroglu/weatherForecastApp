@@ -13,21 +13,22 @@ export default class SearchScreen extends Component {
     fetchCities = (text) => {
         console.log(text)
         this.setState({ text })
-        fetch(`http://autocomplete.wunderground.com/aq?query=${text}`)
-            .then(data => data.json())
-            .then(city => {
-                this.setState({
-                    cities: city.RESULTS.slice(0, 9)
+        if (this.state.text.length > 0) {
+            fetch(`http://autocomplete.wunderground.com/aq?query=${text}`)
+                .then(data => data.json())
+                .then(city => {
+                    this.setState({
+                        cities: city.RESULTS.slice(0, 9)
+                    })
                 })
-            })
-        console.log(this.state.cities)
+        } else {
+            this.setState({ cities: [] })
+        }
+
     }
 
 
-    async  onSaveChange() {
-        this.props.navigation.navigate('Home', { city: this.state.text })
-        await AsyncStorage.setItem("mericity", this.state.text)
-    }
+
     async  listclicked(name) {
         this.setState({ text: name })
         await AsyncStorage.setItem("mericity", this.state.text)
@@ -39,7 +40,7 @@ export default class SearchScreen extends Component {
         if (this.state.cities.length > 0) {
             renderCity = this.state.cities.map(city => {
                 return (
-                    <Card key={city.lat} onPress={() => this.listclicked(city.name)}>
+                    <Card key={city.name} onPress={() => this.listclicked(city.name)}>
                         <Text >{city.name}</Text>
                     </Card>
                 )
@@ -56,9 +57,7 @@ export default class SearchScreen extends Component {
                     value={this.state.text}
                     onChangeText={text => this.fetchCities(text)}
                 />
-                <TouchableOpacity style={styles.button} onPress={() => onSaveChange()}>
-                    <Text style={styles.buttonText}> Save Changes</Text>
-                </TouchableOpacity>
+
                 <ScrollView>
                     {
                         renderCity

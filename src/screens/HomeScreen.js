@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, StatusBar, TextInput, AsyncStorage, ScrollView,
 import MyHeader from '../components/MyHeader'
 import Card from '../components/Card'
 import { LinearGradient } from 'expo'
-
+import { keys } from '../../config'
 
 export default class HomeScreen extends Component {
 
@@ -18,12 +18,12 @@ export default class HomeScreen extends Component {
     }
 
     async getWeather() {
-        //https://api.openweathermap.org/data/2.5/weather?q=ankara&units=metric&appid=8206c24ea422091548d1bd5b0a092ccb
-        Mycity = await AsyncStorage.getItem('mericity');
-        console.log(Mycity)
-        Mycity = this.props.navigation.getParam('city', "ankara")
 
-        fetch(`https://api.openweathermap.org/data/2.5/weather?q=${Mycity}&units=metric&appid=8206c24ea422091548d1bd5b0a092ccb`)
+        Mycity = await AsyncStorage.getItem('mericity');
+
+        Mycity = this.props.navigation.getParam('city', "aydin")
+
+        fetch(`https://api.openweathermap.org/data/2.5/weather?q=${Mycity}&units=metric&appid=${keys}`)
             .then(res => res.json())
             .then(data => {
 
@@ -48,7 +48,7 @@ export default class HomeScreen extends Component {
         if (this.props.navigation.getParam('city')) {
             this.getWeather()
         }
-        console.log(this.state.info)
+
         return (
             <View style={styles.container}>
                 <StatusBar barStyle="light-content"></StatusBar>
