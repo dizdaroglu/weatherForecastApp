@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, StatusBar, TextInput, AsyncStorage, ScrollView, Alert, Image } from 'react-native';
 import MyHeader from '../components/MyHeader'
-import Card from '../components/Card'
-import { LinearGradient } from 'expo'
+
 import { keys } from '../../config'
 
 export default class HomeScreen extends Component {
@@ -21,12 +20,14 @@ export default class HomeScreen extends Component {
 
         Mycity = await AsyncStorage.getItem('mericity');
 
-        Mycity = this.props.navigation.getParam('city', "aydin")
+        if (!Mycity) {
+            Mycity = this.props.navigation.getParam('city', 'Aydin')
+
+        }
 
         fetch(`https://api.openweathermap.org/data/2.5/weather?q=${Mycity}&units=metric&appid=${keys}`)
             .then(res => res.json())
             .then(data => {
-
                 this.setState({
                     info: {
                         name: data.name,
@@ -59,12 +60,19 @@ export default class HomeScreen extends Component {
                     <Image
                         style={{ width: 120, height: 120 }}
                         source={{ uri: "http://openweathermap.org/img/w/" + this.state.info.icon + ".png" }} />
-                    <Text style={styles.text}>{this.state.info.temp}</Text>
-                    <Text style={styles.text}>{this.state.info.desc}</Text>
-                    <Text style={styles.text}>{this.state.info.humidity}</Text>
+                    <Text style={styles.text}>
+                        <Text style={{ fontWeight: '300', color: "#EFECF4" }}>Temperature: </Text>
+                        {this.state.info.temp}
+                    </Text>
+                    <Text style={styles.text}>
+                        <Text style={{ fontWeight: '300', color: "#EFECF4" }}> Description: </Text>
+                        {this.state.info.desc}</Text>
+                    <Text style={styles.text}>
+                        <Text style={{ fontWeight: '300', color: "#EFECF4" }}>Humidity: </Text>
+                        {this.state.info.humidity}</Text>
 
                 </View>
-            </View>
+            </View >
         );
     }
 }

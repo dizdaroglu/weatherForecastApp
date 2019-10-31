@@ -13,26 +13,38 @@ export default class SearchScreen extends Component {
     fetchCities = (text) => {
         console.log(text)
         this.setState({ text })
-        if (this.state.text.length > 0) {
-            fetch(`http://autocomplete.wunderground.com/aq?query=${text}`)
-                .then(data => data.json())
-                .then(city => {
-                    this.setState({
-                        cities: city.RESULTS.slice(0, 9)
-                    })
+        console.log("fetchCities:1", this.state.text)
+
+        fetch(`http://autocomplete.wunderground.com/aq?query=${text}`, {
+            method: "POST",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                pin: 212,
+            })
+        })
+
+            .then(data => data.json())
+            .then(city => {
+                this.setState({
+                    cities: city.RESULTS.slice(0, 9)
                 })
-        } else {
-            this.setState({ cities: [] })
-        }
+            })
+
 
     }
 
 
 
     async  listclicked(name) {
-        this.setState({ text: name })
-        await AsyncStorage.setItem("mericity", this.state.text)
-        this.props.navigation.navigate('Home', { city: this.state.text })
+        this.setState({
+            text: name
+        })
+
+        await AsyncStorage.setItem("mericity", name)
+        this.props.navigation.navigate('Home', { city: name })
 
     }
     render() {
